@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from utils import *
 import torch
 
-top_server_pos_x, top_server_pos_y, main_server_pos_x, main_server_pos_y, sub_server_pos_x, sub_server_pos_y = processData()
+top_server_pos_x, top_server_pos_y, main_server_pos_x, main_server_pos_y, sub_server_pos_x, sub_server_pos_y, _ = processData()
 first_cluster = []
 second_cluster = []
 third_cluster = []
@@ -16,6 +16,7 @@ def initDistance():
 
 
 def updateDistance(distanceTensor: torch.tensor, target_idx, group_idx):
+    column_cache = distanceTensor[:, target_idx]
     distanceTensor[:, target_idx] = 10000
     target_x = sub_server_pos_x[target_idx]
     target_y = sub_server_pos_y[target_idx]
@@ -26,7 +27,7 @@ def updateDistance(distanceTensor: torch.tensor, target_idx, group_idx):
         new_distance = distance((target_x, target_y), (sub_server_pos_x[i], sub_server_pos_y[i]))
         if new_distance < original_distance:
             distanceTensor[group_idx, i] = new_distance
-    return distanceTensor
+    return distanceTensor, column_cache
 
 
 def getOneItem(Distance: torch.tensor):
@@ -42,17 +43,17 @@ def getOneItem(Distance: torch.tensor):
         fourth_cluster.append(rowidx[columnidx].item())
     else:
         fifth_cluster.append(rowidx[columnidx].item())
-    return updateDistance(Distance, rowidx[columnidx], columnidx)
+    return updateDistance(Distance, rowidx[columnidx], columnidx), rowidx[columnidx], columnidx
 
 
 distance_tensor = initDistance()
 for i in range(84):
-    distance_tensor = getOneItem(distance_tensor)
-# print(first_cluster)
-# print(second_cluster)
-# print(third_cluster)
-# print(fourth_cluster)
-# print(fifth_cluster)
+    (distance_tensor,_ ),  _, _ = getOneItem(distance_tensor)
+print(first_cluster)
+print(second_cluster)
+print(third_cluster)
+print(fourth_cluster)
+print(fifth_cluster)
 def plot_cluster(cluster, idx):
     original_point_x = main_server_pos_x[idx]
     original_point_y = main_server_pos_y[idx]
@@ -63,12 +64,12 @@ def plot_cluster(cluster, idx):
 
 
 
-
-plot_basic()
-plot_cluster(first_cluster, 0)
-plot_cluster(second_cluster, 1)
-plot_cluster(third_cluster, 2)
-plot_cluster(fourth_cluster, 3)
-plot_cluster(fifth_cluster, 4)
-plt.savefig('second.png')
-plt.show()
+def plot():
+    plot_basic()
+    plot_cluster(first_cluster, 0)
+    plot_cluster(second_cluster, 1)
+    plot_cluster(third_cluster, 2)
+    plot_cluster(fourth_cluster, 3)
+    plot_cluster(fifth_cluster, 4)
+    plt.savefig('second.png')
+    plt.show()

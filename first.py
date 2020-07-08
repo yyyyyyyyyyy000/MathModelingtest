@@ -8,7 +8,7 @@ from matplotlib.patches import Circle
 from utils import *
 
 
-top_server_pos_x, top_server_pos_y, main_server_pos_x, main_server_pos_y, sub_server_pos_x, sub_server_pos_y = processData()
+top_server_pos_x, top_server_pos_y, main_server_pos_x, main_server_pos_y, sub_server_pos_x, sub_server_pos_y, _ = processData()
 total_distance: torch.tensor = get_total_distance()
 top_distance = get_top_distance()
 values, idxs = torch.min(total_distance, dim=0)

@@ -7,5 +7,7 @@ import torch
 # a = np.array([1])
 # print(a.item())
 a = torch.randn(5,6)
-a[:,2] = -1
+# a[:,2] = -1
+# print(a)
+a[4] += 100
 print(a)
